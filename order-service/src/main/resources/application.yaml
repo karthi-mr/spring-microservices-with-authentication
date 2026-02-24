@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: order-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+server:
+  port: 8082
+
+application:
+  security:
+    jwt:
+      secret-key: 88bd01110be524ab76598b512c6a3ffab92cf9bf164cb5fe391183972df3b145
+      issuer: auth-service
