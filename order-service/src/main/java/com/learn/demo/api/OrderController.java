@@ -1,5 +1,6 @@
 package com.learn.demo.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,9 @@ import static java.lang.String.format;
 @RequestMapping("/orders")
 public class OrderController {
 
+    @Value("${server.port}")
+    private String port;
+
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> me(Authentication authentication) {
@@ -26,5 +30,11 @@ public class OrderController {
     public ResponseEntity<String> adminOnly(Authentication authentication) {
         return ResponseEntity
                 .ok(format("Hello %s, ADMIN secret data.", authentication.getName()));
+    }
+
+    @GetMapping("/instance")
+    public ResponseEntity<String> instance() {
+        return ResponseEntity
+                .ok(format("Order service running in instance port: %s", port));
     }
 }
