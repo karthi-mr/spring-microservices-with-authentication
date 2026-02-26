@@ -1,11 +1,11 @@
 # Spring Microservices with JWT Authentication
 
-A production-style Spring Boot microservices architecture implementing secure JWT-based authentication using Spring Security, Spring Cloud Gateway, and Eureka Service Discovery. :contentReference[oaicite:2]{index=2}
+A production-style Spring Boot microservices architecture implementing secure JWT-based authentication using Spring Security, Spring Cloud Gateway, and Eureka Service Discovery.
 
 ---
 
 ## 🔗 Repository
-https://github.com/karthi-mr/spring-microservices-with-authentication :contentReference[oaicite:3]{index=3}
+https://github.com/karthi-mr/spring-microservices-with-authentication
 
 ---
 
@@ -14,11 +14,11 @@ https://github.com/karthi-mr/spring-microservices-with-authentication :contentRe
 **Auth Service** → Issues JWT  
 **API Gateway** → Validates JWT & routes requests  
 **Order Service** → Protected resource service  
-**Discovery Server (Eureka)** → Service registry :contentReference[oaicite:4]{index=4}
+**Discovery Server (Eureka)** → Service registry
 
 **Gateway Routes (via service discovery):**
 - `/auth/**` → `lb://auth-service`
-- `/orders/**` → `lb://order-service` :contentReference[oaicite:5]{index=5}
+- `/orders/**` → `lb://order-service`
 
 ### Request Flow
 
@@ -30,14 +30,14 @@ Client -> API Gateway -> Order Service (send JWT)
 
 ## ⚙️ Tech Stack
 
-- Java 21 :contentReference[oaicite:6]{index=6}
-- Spring Boot 4.0.3 :contentReference[oaicite:7]{index=7}
+- Java 21
+- Spring Boot 4.0.3
 - Spring Security 7
-- Spring Cloud 2025.1.0 :contentReference[oaicite:8]{index=8}
-- Spring Cloud Gateway (Reactive/WebFlux) :contentReference[oaicite:9]{index=9}
-- Eureka Discovery Server (Netflix Eureka) :contentReference[oaicite:10]{index=10}
-- JWT (jjwt) :contentReference[oaicite:11]{index=11}
-- PostgreSQL (Dockerized) :contentReference[oaicite:12]{index=12}
+- Spring Cloud 2025.1.0
+- Spring Cloud Gateway (Reactive/WebFlux)
+- Eureka Discovery Server (Netflix Eureka)
+- JWT (jjwt)
+- PostgreSQL (Dockerized)
 - Maven
 
 ---
@@ -46,18 +46,18 @@ Client -> API Gateway -> Order Service (send JWT)
 
 | Service | Name (Eureka) | Port |
 |--------|----------------|------|
-| Discovery Server | `discovery-server` | `8761` :contentReference[oaicite:13]{index=13} |
-| API Gateway | `gateway-service` | `8080` :contentReference[oaicite:14]{index=14} |
-| Auth Service | `auth-service` | `8081` :contentReference[oaicite:15]{index=15} |
-| Order Service | `order-service` | `8082` :contentReference[oaicite:16]{index=16} |
-| PostgreSQL (Docker) | - | `5433 -> 5432` :contentReference[oaicite:17]{index=17} |
+| Discovery Server | `discovery-server` | `8761`|
+| API Gateway | `gateway-service` | `8080`|
+| Auth Service | `auth-service` | `8081`|
+| Order Service | `order-service` | `8082`|
+| PostgreSQL (Docker) | - | `5433 -> 5432`|
 
 ---
 
 ## 🔐 JWT Configuration (as used in services)
 
-- Shared issuer: `auth-service` :contentReference[oaicite:18]{index=18}
-- Shared secret (configured in services) :contentReference[oaicite:19]{index=19}
+- Shared issuer: `auth-service`
+- Shared secret (configured in services)
 
 > Note: values are currently committed in config for learning/demo. For production, move to environment variables / secrets manager.
 
@@ -65,7 +65,7 @@ Client -> API Gateway -> Order Service (send JWT)
 
 ## 🐳 PostgreSQL (Docker) for Auth Service
 
-This repo includes a `docker-compose.yaml` that starts PostgreSQL for the Auth Service database. :contentReference[oaicite:20]{index=20}
+This repo includes a `docker-compose.yaml` that starts PostgreSQL for the Auth Service database.
 
 ### Start Postgres with Docker Compose
 ```bash
@@ -167,5 +167,3 @@ GitHub: https://github.com/karthi-mr
 LinkedIn: https://www.linkedin.com/in/karthi-mr
 
 If this project helped you, consider ⭐ starring the repo!
-
-::contentReference[oaicite:33]{index=33}
