@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+          routes:
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/orders/**
+
+eureka:
+  client:
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+server:
+  port: 8080
+
+
+application:
+  security:
+    jwt:
+      secret-key: 88bd01110be524ab76598b512c6a3ffab92cf9bf164cb5fe391183972df3b145
+      issuer: auth-service
