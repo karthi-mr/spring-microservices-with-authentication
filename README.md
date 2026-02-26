@@ -1,255 +1,171 @@
-# 🚀 Spring Microservices with JWT Authentication
+# Spring Microservices with JWT Authentication
 
-![Java](https://img.shields.io/badge/Java-21-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.x-brightgreen)
-![Spring Security](https://img.shields.io/badge/Spring%20Security-7-green)
-![JWT](https://img.shields.io/badge/Auth-JWT-blue)
-![Docker](https://img.shields.io/badge/Database-Dockerized%20Postgres-blue)
-![Architecture](https://img.shields.io/badge/Architecture-Microservices-purple)
-
-A production-style Spring Boot microservices architecture implementing secure JWT-based authentication using Spring Security, Spring Cloud Gateway, and Eureka Service Discovery.
-
-This project demonstrates how authentication works across distributed services in a real-world microservice setup.
+A production-style Spring Boot microservices architecture implementing secure JWT-based authentication using Spring Security, Spring Cloud Gateway, and Eureka Service Discovery. :contentReference[oaicite:2]{index=2}
 
 ---
 
-## 🔗 GitHub Repository
-
-https://github.com/karthi-mr/spring-microservices-with-authentication
-
----
-
-## 🏗️ Architecture Overview
-
-Auth Service → Issues JWT  
-API Gateway → Validates JWT & Routes Requests  
-Order Service → Protected Resource Service
-
-```
-Client → API Gateway → Auth Service (Login)
-Client → API Gateway → Order Service (With JWT)
-```
+## 🔗 Repository
+https://github.com/karthi-mr/spring-microservices-with-authentication :contentReference[oaicite:3]{index=3}
 
 ---
 
-## 🧠 Tech Stack
+## 🧩 Architecture Overview
 
-- Java 21
-- Spring Boot 4.x
+**Auth Service** → Issues JWT  
+**API Gateway** → Validates JWT & routes requests  
+**Order Service** → Protected resource service  
+**Discovery Server (Eureka)** → Service registry :contentReference[oaicite:4]{index=4}
+
+**Gateway Routes (via service discovery):**
+- `/auth/**` → `lb://auth-service`
+- `/orders/**` → `lb://order-service` :contentReference[oaicite:5]{index=5}
+
+### Request Flow
+
+Client -> API Gateway -> Auth Service (login, get JWT)
+Client -> API Gateway -> Order Service (send JWT)
+
+
+---
+
+## ⚙️ Tech Stack
+
+- Java 21 :contentReference[oaicite:6]{index=6}
+- Spring Boot 4.0.3 :contentReference[oaicite:7]{index=7}
 - Spring Security 7
-- Spring Cloud Gateway (Reactive)
-- Eureka Service Discovery
-- JWT (jjwt library)
-- PostgreSQL (Dockerized)
+- Spring Cloud 2025.1.0 :contentReference[oaicite:8]{index=8}
+- Spring Cloud Gateway (Reactive/WebFlux) :contentReference[oaicite:9]{index=9}
+- Eureka Discovery Server (Netflix Eureka) :contentReference[oaicite:10]{index=10}
+- JWT (jjwt) :contentReference[oaicite:11]{index=11}
+- PostgreSQL (Dockerized) :contentReference[oaicite:12]{index=12}
 - Maven
-- Docker
 
 ---
 
-## 🔐 Authentication Flow
+## 🧱 Services & Ports (Local)
 
-1. User sends login request to Auth Service
-2. Auth Service validates credentials
-3. JWT token is generated and returned
-4. Client sends JWT in Authorization header
-5. API Gateway validates token
-6. Request is routed to protected services (Order Service)
-
-Header format:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
+| Service | Name (Eureka) | Port |
+|--------|----------------|------|
+| Discovery Server | `discovery-server` | `8761` :contentReference[oaicite:13]{index=13} |
+| API Gateway | `gateway-service` | `8080` :contentReference[oaicite:14]{index=14} |
+| Auth Service | `auth-service` | `8081` :contentReference[oaicite:15]{index=15} |
+| Order Service | `order-service` | `8082` :contentReference[oaicite:16]{index=16} |
+| PostgreSQL (Docker) | - | `5433 -> 5432` :contentReference[oaicite:17]{index=17} |
 
 ---
 
-## 📦 Microservices
+## 🔐 JWT Configuration (as used in services)
 
-### 1️⃣ Eureka Server
-Service registry for all microservices.
+- Shared issuer: `auth-service` :contentReference[oaicite:18]{index=18}
+- Shared secret (configured in services) :contentReference[oaicite:19]{index=19}
 
-Runs on:
-```
-http://localhost:8761
-```
+> Note: values are currently committed in config for learning/demo. For production, move to environment variables / secrets manager.
 
 ---
 
-### 2️⃣ Auth Service
-- Handles authentication
-- Generates JWT
-- Connected to Dockerized PostgreSQL
+## 🐳 PostgreSQL (Docker) for Auth Service
 
----
+This repo includes a `docker-compose.yaml` that starts PostgreSQL for the Auth Service database. :contentReference[oaicite:20]{index=20}
 
-### 3️⃣ API Gateway
-- Reactive WebFlux gateway
-- Validates JWT
-- Routes requests using service discovery
-- Performs load balancing using logical service names
+### Start Postgres with Docker Compose
+```bash
+docker compose up -d
 
----
+docker-compose.yaml (current):
 
-### 4️⃣ Order Service
-- Protected resource service
-- Requires valid JWT
-- Registered with Eureka
+POSTGRES_USER=admin
 
----
+POSTGRES_PASSWORD=admin@321
 
-## 🐳 Docker Setup (PostgreSQL)
+POSTGRES_DB=demo_auth
 
-PostgreSQL is containerized for the Auth Service database.
+exposed port: 5433:5432
 
-### Run using Docker:
+Auth Service connects to:
+jdbc:postgresql://localhost:5433/demo_auth
 
-```
-docker run --name auth-postgres \
-  -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=admin@321 \
-  -e POSTGRES_DB=demo_auth \
-  -p 5433:5432 \
-  -d postgres
-```
+▶️ How to Run (Local)
+1) Start PostgreSQL (Docker)
+docker compose up -d
 
-### Or using Docker Compose
-
-```
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres
-    container_name: auth-postgres
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin@321
-      POSTGRES_DB: demo_auth
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-
-volumes:
-  postgres-data:
-```
-
----
-
-## ▶️ How to Run the Project
-
-### Step 1 — Start PostgreSQL (Docker)
-
-Make sure the container is running.
-
----
-
-### Step 2 — Start Eureka Server
-
-```
-cd eureka-server
+2) Start Eureka Discovery Server
+cd discovery-server
 mvn spring-boot:run
-```
 
----
+Runs at: http://localhost:8761
 
-### Step 3 — Start Auth Service
-
-```
+3) Start Auth Service
 cd auth-service
 mvn spring-boot:run
-```
 
----
+Runs at: http://localhost:8081
 
-### Step 4 — Start Order Service
-
-```
+4) Start Order Service
 cd order-service
 mvn spring-boot:run
-```
 
----
+Runs at: http://localhost:8082
 
-### Step 5 — Start API Gateway
-
-```
-cd api-gateway
+5) Start API Gateway
+cd gateway-service
 mvn spring-boot:run
-```
 
----
+Runs at: http://localhost:8080
 
-## 🧪 Testing Flow
+✅ Testing (High-level)
 
-1. Login via Auth Service endpoint
-2. Copy generated JWT
-3. Call Order Service endpoint via Gateway
-4. Pass JWT in Authorization header
-5. Access granted if token is valid
+Call Auth endpoints via Gateway:
 
----
+http://localhost:8080/auth/**
 
-## 🎯 Key Concepts Demonstrated
+Copy JWT from the auth response.
 
-- Stateless authentication in microservices
-- JWT generation and validation
-- Gateway-level security implementation
-- Reactive vs MVC microservice architecture
-- Service discovery using Eureka
-- Load balancing using logical service names (`lb://`)
-- Dockerized database integration
-- Debugging 401 Unauthorized issues
-- Spring Security filter chain understanding
+Call Order endpoints via Gateway with header:
 
----
+Authorization: Bearer <JWT>
 
-## 📂 Project Structure
+http://localhost:8080/orders/**
 
-```
+🧠 Key Concepts Demonstrated
+
+Stateless authentication in microservices
+
+JWT issuance (Auth service) and JWT validation (Gateway + services)
+
+Service discovery based routing (lb://...)
+
+Reactive Gateway (WebFlux) vs MVC microservices
+
+Debugging Spring Security filter chain / 401 issues
+
+📂 Project Structure
 spring-microservices-with-authentication
-│
-├── eureka-server
 ├── auth-service
+├── discovery-server
+├── gateway-service
 ├── order-service
-├── api-gateway
-└── docker-compose.yml
+└── docker-compose.yaml
 ```
 
----
+🚀 Future Enhancements (Ideas)
 
-## 🔎 Real-World Learning Outcomes
+Refresh tokens
 
-- How JWT travels across microservices
-- Security configuration pitfalls in distributed systems
-- Gateway vs service-level token validation
-- Handling authentication errors in production-style setups
+Role-based authorization (RBAC)
 
----
+RS256 (public/private key JWT)
 
-## 🚀 Future Enhancements
+Full Dockerized microservice stack (all services)
 
-- Refresh token implementation
-- Role-based authorization (RBAC)
-- RS256 public/private key JWT
-- Full Dockerized microservice stack
-- Centralized logging
-- Monitoring & tracing (Zipkin, Prometheus, Grafana)
+Observability (logs/tracing/metrics)
 
----
+👤 Author
 
-## 👨‍💻 Author
+Karthi M
+GitHub: https://github.com/karthi-mr
 
-**Karthi M**  
-Full Stack Developer (Spring Boot + React)
+LinkedIn: https://www.linkedin.com/in/karthi-mr
 
-- GitHub: https://github.com/karthi-mr
-- LinkedIn: https://www.linkedin.com/in/karthi-mr
+If this project helped you, consider ⭐ starring the repo!
 
-If this project helped you, consider ⭐ starring the repository!
-
----
-
-## 📜 License
-
-This project is for learning and demonstration purposes.
+::contentReference[oaicite:33]{index=33}
